@@ -20,19 +20,21 @@ Read and clean the data, retain line, station name, station latitude/longitude, 
 subway_data = read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
   janitor::clean_names() %>%
   select(line, station_name, station_latitude, station_longitude, route1, route2, route3, route4, route5, route6, route7, route8, route9, route10, route11, entry, vending, entrance_type, ada) %>%
-  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE)) 
+  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE)) %>%
+  gather(key = route_served, value = route, route1:route11)
 ```
 
 Describe the dataset:
 
-This dataset contains information on the NYC subway. Each observation has a station name, the line it's on, the latitude and longitude of the station, the route(s) it serves, if you can enter the station, if there is vending, what type of entrance the station has, and if it is ADA compliant. There is a maximum of 11 routes served for each station. The dataset has `r nrow(subway_data)` rows and `r ncol(subway_data)` columns. These data could be more tidy by combining the routes served into one variable. 
+This dataset contains information on the NYC subway. Each observation has a station name, the line it's on, the latitude and longitude of the station, the route(s) it serves, if you can enter the station, if there is vending, what type of entrance the station has, and if it is ADA compliant. There is a maximum of 11 routes served for each station. The dataset has `r nrow(subway_data)` rows and `r ncol(subway_data)` columns. These data could be more tidy by further cleaning the route_served variable. 
 
 
-
-```{r}
-
+```{r, manipulation}
+subway_data = distinct(subway_data, station_name, route, .keep_all = TRUE)
+subway_no_vending = filter(subway_data, vending == "NO")
 ```
 
+There are `r nrow(subway_data)` distinct stations. `r sum(as.numeric(subway_data$ada))` stations are ADA compliant. The proportion of station entrances/exits without vending that allow entrance is `r sum(as.numeric(subway_no_vending$entry))/nrow(subway_no_vending)`.
 
 
 ## Problem 2
