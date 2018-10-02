@@ -101,3 +101,10 @@ brfss_smart2010 =
   bind_rows
 ```
 
+```{r, tidy_brfss}
+brfss_smart2010 = janitor::clean_names(brfss_smart2010) %>%
+  filter(topic == "Overall Health") %>%
+  select(-starts_with("class"), -starts_with("topic"), -starts_with("question"), -starts_with("sample_size"), -starts_with("confidence_limit"))
+```
+
+
