@@ -3,6 +3,8 @@ title: "p8105_hw2_cj2493"
 author: "Courtney Johnson"
 date: "September 28, 2018"
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -18,8 +20,19 @@ Read and clean the data, retain line, station name, station latitude/longitude, 
 subway_data = read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
   janitor::clean_names() %>%
   select(line, station_name, station_latitude, station_longitude, route1, route2, route3, route4, route5, route6, route7, route8, route9, route10, route11, entry, vending, entrance_type, ada) %>%
-  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
+  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE)) 
 ```
+
+Describe the dataset:
+
+This dataset contains information on the NYC subway. Each observation has a station name, the line it's on, the latitude and longitude of the station, the route(s) it serves, if you can enter the station, if there is vending, what type of entrance the station has, and if it is ADA compliant. There is a maximum of 11 routes served for each station. The dataset has `r nrow(subway_data)` rows and `r ncol(subway_data)` columns. These data could be more tidy by combining the routes served into one variable. 
+
+
+
+```{r}
+
+```
+
 
 
 ## Problem 2
