@@ -10,6 +10,7 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(readxl)
 ```
 
 ## Problem 1
@@ -38,5 +39,14 @@ There are `r nrow(subway_data)` distinct stations. `r sum(as.numeric(subway_data
 
 
 ## Problem 2
+
+```{r, read_trash_wheel}
+mr_trash_wheel_data = read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A2:N258")) %>%
+  janitor::clean_names() %>%
+  select(-x_1) %>%
+  filter(!is.na(dumpster), !is.na(date)) %>%
+  mutate(sports_balls = as.integer(sports_balls))
+```
+
 
 ## Problem 3
