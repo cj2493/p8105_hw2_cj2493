@@ -40,13 +40,28 @@ There are `r nrow(subway_data)` distinct stations. `r sum(as.numeric(subway_data
 
 ## Problem 2
 
-```{r, read_trash_wheel}
-mr_trash_wheel_data = read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A2:N258")) %>%
+```{r, mr_trash_wheel}
+mr_trash_wheel_data = read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>%
   janitor::clean_names() %>%
-  select(-x_1) %>%
   filter(!is.na(dumpster), !is.na(date)) %>%
   mutate(sports_balls = as.integer(sports_balls))
 ```
+
+```{r, precipitation}
+precip_17_data = read_xlsx("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet  = "2017 Precipitation", range = "A2:B14", col_names = TRUE) %>%
+  janitor::clean_names() %>%
+  mutate(year = 2017) %>%
+  filter(!is.na(total))
+
+precip_16_data = read_xlsx("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet  = "2016 Precipitation", range = "A2:B14", col_names = TRUE) %>%
+  janitor::clean_names() %>%
+  mutate(year = 2016) %>%
+  filter(!is.na(total))
+
+precip_data = left_join(precip_16_data, precip_17_data, by = "month") %>%
+  mutate(month = month.name[month])
+```
+
 
 
 ## Problem 3
