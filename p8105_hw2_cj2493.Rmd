@@ -65,5 +65,39 @@ precip_data = left_join(precip_16_data, precip_17_data, by = "month") %>%
 Describe the data:
 
 The data for precipitation in 2016 has information for `r ncol(precip_16_data)` months, and the data for precipitation in 2017 has information for `r ncol(precip_17_data)` months. For available data, the total precipitation in 2017 was `r sum(precip_data$total.y)`
- inches. 
+ inches. The median number of sports balls in a dumpster in 2016 is `r median(filter(mr_trash_wheel_data, year == 2016)$sports_balls)`.
+ 
 ## Problem 3
+
+```{r, p8105_data}
+devtools::install_github("P8105/p8105.datasets")
+library(p8105.datasets)
+library(httr)
+library(jsonlite)
+
+var_names = GET("https://chronicdata.cdc.gov/views/acme-vg9e.json") %>%
+  content("text") %>%
+  fromJSON() %>% 
+  .[["columns"]] %>% 
+  .[["name"]] %>% 
+  .[-23]
+
+brfss_smart2010 = 
+  GET("https://chronicdata.cdc.gov/views/acme-vg9e/rows.json") %>% 
+  content("text") %>%
+  fromJSON() %>% 
+  .[["data"]]
+
+row_as_tibble = function(row_as_list, var_names) {
+  var_list = row_as_list[9:30]
+  names(var_list) = var_names 
+  var_list[sapply(var_list, is.null)] <- NULL
+  as_tibble(var_list, validate = FALSE)
+}
+
+brfss_smart2010 = 
+  brfss_smart2010 %>% 
+  map(.x = ., ~row_as_tibble(.x, var_names)) %>% 
+  bind_rows
+```
+
