@@ -62,6 +62,8 @@ precip_data = left_join(precip_16_data, precip_17_data, by = "month") %>%
   mutate(month = month.name[month])
 ```
 
+Describe the data:
 
-
+The data for precipitation in 2016 has information for `r ncol(precip_16_data)` months, and the data for precipitation in 2017 has information for `r ncol(precip_17_data)` months. For available data, the total precipitation in 2017 was `r sum(precip_data$total.y)`
+ inches. 
 ## Problem 3
