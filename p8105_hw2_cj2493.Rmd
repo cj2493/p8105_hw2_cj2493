@@ -15,27 +15,43 @@ library(readxl)
 
 ## Problem 1
 
-Read and clean the data, retain line, station name, station latitude/longitude, routes served, entry, vending, entrance type, and ADA compliance. Convert entry variable to logical from character.
+Read and clean the data; retain line, station name, station latitude/longitude, routes served, entry, vending, entrance type, and ADA compliance. Convert the entry variable from character to logical.
 
 ```{r, clean}
 subway_data = read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
   janitor::clean_names() %>%
-  select(line, station_name, station_latitude, station_longitude, route1, route2, route3, route4, route5, route6, route7, route8, route9, route10, route11, entry, vending, entrance_type, ada) %>%
-  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE)) %>%
-  gather(key = route_served, value = route, route1:route11)
+  select(c(line:entry), vending, ada) %>%
+  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE)) 
 ```
 
 Describe the dataset:
 
-This dataset contains information on the NYC subway. Each observation has a station name, the line it's on, the latitude and longitude of the station, the route(s) it serves, if you can enter the station, if there is vending, what type of entrance the station has, and if it is ADA compliant. There is a maximum of 11 routes served for each station. The dataset has `r nrow(subway_data)` rows and `r ncol(subway_data)` columns. These data could be more tidy by further cleaning the route_served variable. 
+This dataset contains information on the NYC subway. Each observation has a station name, the line it's on, its latitude and longitude, the route(s) it serves, if you can enter the station, if there is vending, what type of entrance the station has, and if it is ADA compliant. There is a maximum of 11 routes served for each station. 
+
+To clean the dataset, I started by cleaning the names to a lower case and snakecase format. Then I selected all the necessary variables. Because most of the variables we want to keep are all next to each other, we can choose to select most of the variables with a vector. Next, I changed the entry variable to a logical variable with mutate() and recode().  
+
+The dataset has `r nrow(subway_data)` rows and `r ncol(subway_data)` columns. These data are not tidy, because we could gather the routes served and get rid of duplicates.
 
 
-```{r, manipulation}
-subway_data = distinct(subway_data, station_name, line, .keep_all = TRUE)
-subway_no_vending = filter(subway_data, vending == "NO")
+```{r, distinct_station}
+subway_distinct_stations = distinct(subway_data, station_name, line, .keep_all = TRUE)
+subway_no_vending = filter(subway_distinct_stations, vending == "NO")
 ```
 
-There are `r nrow(subway_data)` distinct stations. `r sum(as.numeric(subway_data$ada))` stations are ADA compliant. The proportion of station entrances/exits without vending that allow entrance is `r sum(as.numeric(subway_no_vending$entry))/nrow(subway_no_vending)`.
+There are `r nrow(subway_distinct_stations)` distinct stations. `r sum(subway_distinct_stations$ada)` stations are ADA compliant. The proportion of station entrances/exits without vending that allow entrance is `r sum(subway_no_vending$entry)/nrow(subway_no_vending)`.
+
+
+Here we are asked to make route number and route name distinct variables, so we can do this with the gather step.
+
+```{r, distinct_route}
+subway_distinct_route = gather(subway_data, key = route_number, value = route, route1:route11) %>%
+  filter(route == "A") %>%
+  distinct(station_name, line, .keep_all = TRUE) 
+```
+
+
+`r nrow(subway_distinct_route)` distinct stations serve the A train.
+Of the stations that serve the A train, `r sum(subway_distinct_route$ada)` are ADA compliant.
 
 
 ## Problem 2
@@ -87,17 +103,21 @@ brfss_smart2010 = janitor::clean_names(brfss_smart2010) %>%
 
 
 ```{r, state_freq}
+library(openintro)
 state_freq = count(brfss_smart2010, locationabbr)
-state_most = as.character(state_freq[which.max(state_freq$n),1])
+state_most = abbr2state(as.character(state_freq[which.max(state_freq$n),1]))
 ```
 
 
-There are `r nrow(distinct(brfss_smart2010, locationdesc))` locations included in the dataset. There are `r nrow(distinct(brfss_smart2010, locationabbr))` states included, so all 50 states and the District of Columbia are represented. The state that is represented the most is `r state_most`, or New Jersey. In 2002, the median of the "Excellent" response value was `r median(filter(brfss_smart2010, year == 2002)$excellent, na.rm = TRUE)`.
+There are `r nrow(distinct(brfss_smart2010, locationdesc))` locations included in the dataset. There are `r nrow(distinct(brfss_smart2010, locationabbr))` states included, so all 50 states and the District of Columbia are represented. The state that is represented the most is `r state_most`. In 2002, the median of the "Excellent" response value was `r median(filter(brfss_smart2010, year == 2002)$excellent, na.rm = TRUE)`.
 
 
 ```{r, excellent_histogram}
 library(ggplot2)
 ggplot(data = filter(brfss_smart2010, year == 2002), aes(x = excellent)) + geom_histogram()
+```
+
+```{r, excellent_scatterplot}
 ggplot(data = filter(brfss_smart2010, locationdesc == "NY - New York County" | locationdesc == "NY - Queens County"), aes(x = year, y = excellent, color = locationdesc)) + geom_point()
 ```
 
