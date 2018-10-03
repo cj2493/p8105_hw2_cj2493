@@ -79,7 +79,25 @@ data(brfss_smart2010)
 ```{r, tidy_brfss}
 brfss_smart2010 = janitor::clean_names(brfss_smart2010) %>%
   filter(topic == "Overall Health") %>%
-  select(-class, -topic, -question, -sample_size, -c(confidence_limit_low:geo_location))
+  select(-class, -topic, -question, -sample_size, -c(confidence_limit_low:geo_location)) %>%
+  spread(key = response, value = data_value) %>%
+  janitor::clean_names() %>%
+  mutate(excellent_OR_very_good = excellent + very_good)
 ```
 
+
+```{r, state_freq}
+state_freq = count(brfss_smart2010, locationabbr)
+state_most = as.character(state_freq[which.max(state_freq$n),1])
+```
+
+
+There are `r nrow(distinct(brfss_smart2010, locationdesc))` locations included in the dataset. There are `r nrow(distinct(brfss_smart2010, locationabbr))` states included, so all 50 states and the District of Columbia are represented. The state that is represented the most is `r state_most`, or New Jersey. In 2002, the median of the "Excellent" response value was `r median(filter(brfss_smart2010, year == 2002)$excellent, na.rm = TRUE)`.
+
+
+```{r, excellent_histogram}
+library(ggplot2)
+ggplot(data = filter(brfss_smart2010, year == 2002), aes(x = excellent)) + geom_histogram()
+ggplot(data = filter(brfss_smart2010, locationdesc == "NY - New York County" | locationdesc == "NY - Queens County"), aes(x = year, y = excellent, color = locationdesc)) + geom_point()
+```
 
