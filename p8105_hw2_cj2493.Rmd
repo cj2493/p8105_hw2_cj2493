@@ -87,9 +87,9 @@ Describe the data:
 
 The Mr. Trash Wheel dataset has `r nrow(mr_trash_wheel_data)` observations of `r ncol(mr_trash_wheel_data)` variables. The joined dataset of precipitation in 2016 and 2017 has `r nrow(precip_data)` observations of `r ncol(precip_data)` variables.
 
-The Mr. Trash Wheel dataset includes information on specific dumpsters on specific dates. Some of the variables measured per dumpster include weight in tons, volume in cubic yards, and the amount of specific items in the dumpster, like plastic bottles. The only variables of in the preciptation dataset are month, year, and total precipitation. 
+The Mr. Trash Wheel dataset includes information on specific dumpsters on specific dates. Some of the variables measured per dumpster include weight in tons, volume in cubic yards, and the amount of specific items in the dumpster, like plastic bottles. The only variables of in the preciptation dataset are month, year, and total precipitation in inches. 
 
-The data for precipitation in 2016 has information for `r ncol(precip_16_data)` months, and the data for precipitation in 2017 has information for `r ncol(precip_17_data)` months. For available data, the total precipitation in 2017 was `r sum(precip_data$total.y)`
+The data for precipitation in 2016 has information for `r nrow(precip_16_data)` months, and the data for precipitation in 2017 has information for `r nrow(precip_17_data)` months. For available data, the total precipitation in 2017 was `r sum(precip_17_data$total)`
  inches. The median number of sports balls in a dumpster in 2016 is `r median(filter(mr_trash_wheel_data, year == 2016)$sports_balls)`.
  
 ## Problem 3
@@ -120,11 +120,11 @@ Create manipulated versions of the data in order to better answer questions abou
 library(openintro)
 location_freq = count(brfss_smart2010, locationdesc)
 state_freq = count(brfss_smart2010, locationabbr)
-state_most = as.character(state_freq[which.max(state_freq$n),1])
+state_most = abbr2state(as.character(state_freq[which.max(state_freq$n),1]))
 ```
 
 
-There are `r nrow(location_freq)` locations included in the dataset. There are `r nrow(state_freq)` states included, so all 50 states and the District of Columbia are represented. The state that is represented the most is `r abbr2state(state_most)`. In 2002, the median of the "Excellent" response value was `r median(filter(brfss_smart2010, year == 2002)$excellent, na.rm = TRUE)`.
+There are `r nrow(location_freq)` locations included in the dataset. There are `r nrow(state_freq)` states included, so all 50 states and the District of Columbia are represented. The state that is represented the most is `r state_most`. In 2002, the median of the "Excellent" response value was `r median(filter(brfss_smart2010, year == 2002)$excellent, na.rm = TRUE)`.
 
 
 Make a histogram of "Excellent" response values in the year 2002: 
