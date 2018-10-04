@@ -120,7 +120,7 @@ Create manipulated versions of the data in order to better answer questions abou
 library(openintro)
 location_freq = count(brfss_smart2010, locationdesc)
 state_freq = count(brfss_smart2010, locationabbr)
-state_most = abbr2state(as.character(state_freq[which.max(state_freq$n),1]))
+state_most = abbr2state(state_freq[which.max(state_freq$n),1])
 ```
 
 
