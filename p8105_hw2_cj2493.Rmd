@@ -59,7 +59,7 @@ Of the stations that serve the A train, `r sum(subway_distinct_route$ada)` are A
 Read and clean the Mr. Trash Wheel dataset:
 
 ```{r, mr_trash_wheel}
-mr_trash_wheel_data = read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>%
+mr_trash_wheel_data = read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>%
   janitor::clean_names() %>%
   filter(!is.na(dumpster), !is.na(date)) %>%
   mutate(sports_balls = as.integer(sports_balls))
@@ -68,12 +68,12 @@ mr_trash_wheel_data = read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.
 Read and clean precipitation data for 2016 and 2017: 
 
 ```{r, precipitation}
-precip_17_data = read_xlsx("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet  = "2017 Precipitation", range = "A2:B14", col_names = TRUE) %>%
+precip_17_data = read_xlsx("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet  = "2017 Precipitation", range = "A2:B14", col_names = TRUE) %>%
   janitor::clean_names() %>%
   mutate(year = 2017) %>%
   filter(!is.na(total))
 
-precip_16_data = read_xlsx("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet  = "2016 Precipitation", range = "A2:B14", col_names = TRUE) %>%
+precip_16_data = read_xlsx("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet  = "2016 Precipitation", range = "A2:B14", col_names = TRUE) %>%
   janitor::clean_names() %>%
   mutate(year = 2016) %>%
   filter(!is.na(total))
